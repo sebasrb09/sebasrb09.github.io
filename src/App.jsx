@@ -301,8 +301,8 @@ function get_attributes(i){
   let shape = ''
   let color = ''
   let number = ''
-  let url = '../images/image_name_'+i+'.png'
-
+  //let url = 'src/assets/images/image_name_'+i+'.png?raw=true'
+  let url = `${import.meta.env.BASE_URL}images/image_name_${i}.png`;
   filling = get_filling(i)
   shape = get_shape(i)
   number = get_number(i)
