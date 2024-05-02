@@ -23,9 +23,9 @@ For testing the game locally:
 - Go inside the repo
 - Run 
 
-    ```bash
-    npm install
+```bash
+npm install
+npm run dev
+```
 
-    npm run dev
-    ```
     Open the localhost path that it shows in the console.
