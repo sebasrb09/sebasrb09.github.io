@@ -16,6 +16,12 @@ import Col from 'react-bootstrap/Col'
 import Card from 'react-bootstrap/Card'
 import Toast  from 'react-bootstrap/Toast'
 
+
+/**
+ * This component renders a the Rules tab. In it, describes the basic rules of the game.
+ *
+ * @returns {ReactNode} A React element that renders the rules.
+ */
 function Rules(){
   return (
     <div>
@@ -34,6 +40,16 @@ function Rules(){
   )
 }
 
+/**
+ * This component will have the main logic of the program.
+ * It takes care of:
+ *  - Initializing the board
+ *  - Get the first 12 Cards
+ *  - Update the cards once a Set is found
+ *  - Evaluate if there is a Set
+ * @param {*} props Props contains the initial bag of cards, the set function to update it. It will be empty at the beginning.
+ * @returns {ReactNode} A React element that contains the layout of the board, and the game. The layout also contains the Toasters to send messages to the users.
+ */
 function Game(props){
 
   const [flag, setFlag] = useState(false)
@@ -104,8 +120,8 @@ function Game(props){
     setShow(true)
   }
 
-  console.log('currentSet',currentSet)
-  console.log('bag',bag)
+  //console.log('currentSet',currentSet)
+  //console.log('bag',bag)
 
   return (
     <div>
@@ -136,6 +152,12 @@ function Game(props){
   )
 }
 
+/**
+ * Component that will renderize the cards and will also take care of telling the parent component (Game) that a set was selected, and whether it is correct or not
+ * @param {Array} arr Current set of 12 cards in the board
+ * @param {function} update Function to update the board, once a set is selected
+ * @returns A React element that is a container with rows of cards.
+ */
 function Board({arr,update}){
 
   const [counter,setCount] = useState(0)
@@ -181,6 +203,13 @@ function Board({arr,update}){
 
 }
 
+/**
+ * Function that evaluates whether there is a set in the current set of 12 cards.
+ * It goes through all possible sets. If it finds one, it returns true and ends the run.
+ * It just needs to know if there is one possible set.
+ * @param {Array} board An array with all the 12 cards.
+ * @returns {boolean} True if there is a set, false is there is no set.
+ */
 function evaluate_whole_board(board){
   for (let i = 0; i < board.length;i++){
     for (let j = i+1; j < board.length;j++){
@@ -195,6 +224,16 @@ function evaluate_whole_board(board){
   return false
 }
 
+/**
+ * Function that is the "main" logic of the program.
+ * It takes three cards, and compares each of the attributes between them. 
+ * If for each attribute all are the same or all different, then it is a set, and returns true.
+ * If for one attribute it does not fullfils this rule, then returns false and ends the run.
+ * @param {*} card1 Card object, that contains all the attributes 
+ * @param {*} card2 Card object, that contains all the attributes
+ * @param {*} card3 Card object, that contains all the attributes
+ * @returns True if they are a valid set, false if not.
+ */
 function check_set(card1,card2,card3){
 
   console.log('cards',card1,card2,card3)
@@ -213,6 +252,17 @@ function check_set(card1,card2,card3){
   return flag
 }
 
+/**
+ * Component that models each card functionality. 
+ * @param {*} param0
+ * @param {function} setCounter Function to update the counter. It is passed by the parent component, to keep track of how many cards have been selected to for the set.
+ * @param {function} handleThree Function to check if three cards have been selected, and see if it is a set or not.  
+ * @param {string} url String with the url of the image of the card.
+ * @param {int} index Index of the card in the array.
+ * @param {Array} indexes List of selected indexes so far, to form the set.
+ * @param {function} setIndexes Function to update the list of indexes, by the parent component.
+ * @returns React element that is a Card that shows the image of it.
+ */
 const CardComponent = ({ counter, setCounter,handleThree ,url,index,indexes,setIndexes}) => {
 
   const [border,setBorder] = useState("light")
@@ -252,26 +302,13 @@ const CardComponent = ({ counter, setCounter,handleThree ,url,index,indexes,setI
   );
 };
 
-class Set_Card extends Component {
-  state = {filling:'',shape:'',color:'',number:0,url:'',counter:0};
-  constructor(props){
-    super(props);
-    this.state = props
-  }
 
-  render(){
-    return (
-      <Col>
-        <Card style={{ cursor: "pointer" }}>
-          <Card.Img variant='top' src={this.state.url}></Card.Img>
-        </Card>
-      </Col>
-    )
-  }
-}
-
-
-
+/**
+ * Function that takes the bag of cards, and gets n cards randomly from it.
+ * @param {Array} arr Bag of cards 
+ * @param {int} n How many cards to sample
+ * @returns Two arrays, the first one is the selected n cards, and the second is the new bag without the selected cards.
+ */
 function get_cards_from_bag(arr,n){
 
   // Shuffle array
@@ -282,37 +319,47 @@ function get_cards_from_bag(arr,n){
 
   let bag2 = shuffled.slice(n);
 
-  console.log(selected)
-  console.log(bag2)
+  //console.log(selected)
+  //console.log(bag2)
 
   return {selected,bag2}
   
 }
 
+/**
+ * Function that loads the data into an Array.
+ * @returns The initial array of 81 cards.
+ */
 function load_data(){
   let data = Array.from({length:81},(x,i) => get_attributes(i+1))
   return data
 }
 
-
+/**
+ * Function that will get the card i and get its attributes, and then returns the an object
+ * @param {*} i Card i in the files
+ * @returns A card object with the attributes.
+ */
 function get_attributes(i){
 
   let filling = ''
   let shape = ''
   let color = ''
   let number = ''
-  //let url = 'src/assets/images/image_name_'+i+'.png?raw=true'
   let url = `${import.meta.env.BASE_URL}images/image_name_${i}.png`;
   filling = get_filling(i)
   shape = get_shape(i)
   number = get_number(i)
   color = get_color(i)
 
-  let card = new Set_Card({filling,shape,color,number,url,counter:0})
-
   return {filling,shape,color,number,url,counter:0}
 }
 
+/**
+ * Function to get the filling of the card i
+ * @param {*} i 
+ * @returns {string} A string with the filling value.
+ */
 function get_filling(i){
   if ( i < 28){
     return 'full'
@@ -323,6 +370,11 @@ function get_filling(i){
   }
 }
 
+/**
+ * Function to get the shape of the card i
+ * @param {*} i 
+ * @returns {string} A string with the shape value.
+ */
 function get_shape(i){
   if (i % 27  == 0) {
     return 'round'
@@ -335,6 +387,11 @@ function get_shape(i){
   }
 }
 
+/**
+ * Function to get the number of the card i
+ * @param {*} i 
+ * @returns {string} A string with the number value.
+ */
 function get_number(i){
   if (i % 3  == 0) {
     return 3
@@ -345,6 +402,11 @@ function get_number(i){
   }
 }
 
+/**
+ * Function to get the color of the card i
+ * @param {*} i 
+ * @returns {string} A string with the color value.
+ */
 function get_color(i){
   if (i % 9  == 0) {
     return 'green'
@@ -357,9 +419,11 @@ function get_color(i){
   }
 }
 
-
+/**
+ * Main component.
+ * @returns The main React comppnent to export
+ */
 function App() {
-  const [count, setCount] = useState(0)
   const [key,setKey] = useState('game')
   const [bag,setImages] = useState([])
 
