@@ -22,6 +22,7 @@ For testing the game locally:
 - Clone the repo
 - Go inside the repo
 - Run 
+
     ```bash
     npm install
 
